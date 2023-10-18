@@ -1,0 +1,21 @@
+we can now pass varibles and load html pages
+
+what itll look like :
+
+get stock data
+clean stock data
+pulledStockData = allData()
+
+@app.route("/")
+def home():
+    data = pulledStockData  #^^
+    return render_template("the_page.html", graph_data=data)
+
+HTML:
+
+use chart.js to create the grapg
+pretty up the rest of the page figue ut out as you go
+
+problems:
+python can chang the html but can the front end change the back ?
+live data ()
