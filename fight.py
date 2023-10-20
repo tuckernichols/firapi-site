@@ -59,19 +59,33 @@ nummonth = { 1 : "Jan",  2 : "Feb", 3 : "Mar", 4 : "Apr", 5 : "May", 6 : "Jun", 
 
 def parseClean(params):
     # print(params, "par")
+    s = " "
     try:
         tickers = []
         raw = params.split("*")
+        # print(raw)
 
-        ticks = params[0].split("%")                    # tickers
+        ticks = raw[0].split("%")                    # tickers
         for t in ticks:                         # EX aapl % msft % cost *
             tickers.append(t)
 
-        start = params[1].split("%")                    # Ex 10 % 8 % 2023
+        start = raw[1].split("+")                    # Ex 10 % 8 % 2023
+        m = nummonth[int(start[0])]
+        d = start[1]
+        y = start[2]
+        start = str(m + s + d + s + y)
 
-        end = params[2]
+        if raw[2] == "end":
+            end = datetime.date.today()                 #  FIX
+            end = str(end)
+        else :
+            end = raw[2].split("+")
+            m = nummonth[int(end[0])]
+            d = end[1]
+            y = end[2]
+            end = str(m + s + d + s + y)
         return [tickers, start, end]
-    except: return "ERROR CODE 500. Wrong vaules entered"
+    except: return params, "ERROR CODE 500. Wrong vaules entered"
 
 
 
@@ -88,21 +102,12 @@ def fetch():                                                            #http://
     return "this will be the json data"        # in the end it will be https://base_or_domain/fetch
 
 
-@app.route("/fetch/<params>", methods=["GET"])  # http://127.0.0.1:4000/fetch/aapl%msft%cost*10%8%2023*10%18%2023
+@app.route("/fetch/<params>", methods=["GET"])  # http://127.0.0.1:4000/fetch/aapl%msft%cost*10+8+2023*10+18+2023
 def response(params):                       # [ [ tickers, tickers], start,  end=today]
     params = parseClean(params=params)
-    # print(params)
-    print(params)
-    print(params[0])
-    print(params[1])
-    print(params[2])
-    print(type(params[1]))
-    print(type(params[2]))
+    data = fetcher(tickers=params[0],start=params[1], end=params[2])
 
-
-
-
-    return params
+    return data
 
 
 if __name__ == "__main__":
